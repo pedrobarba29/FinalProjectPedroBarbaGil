@@ -11,12 +11,20 @@ public class InputHandler implements KeyListener {
     public boolean isMoveRight() { return moveRight; }
     public boolean isJump() { return jump; }
 
+    private boolean startGame;
+
+    public boolean isStartGame() {
+        return startGame;
+    }
+
+    
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT  -> moveLeft = true;
             case KeyEvent.VK_RIGHT -> moveRight = true;
             case KeyEvent.VK_SPACE -> jump = true;
+            case KeyEvent.VK_ENTER -> startGame = true;
         }
     }
 
@@ -26,6 +34,7 @@ public class InputHandler implements KeyListener {
             case KeyEvent.VK_LEFT  -> moveLeft = false;
             case KeyEvent.VK_RIGHT -> moveRight = false;
             case KeyEvent.VK_SPACE -> jump = false;
+            case KeyEvent.VK_ENTER -> startGame = false;
         }
     }
 
@@ -33,4 +42,6 @@ public class InputHandler implements KeyListener {
     public void keyTyped(KeyEvent e) {
         // Not used
     }
+    
+
 }

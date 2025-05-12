@@ -61,6 +61,16 @@ public class Player {
             isJumping = false;
         }
     }
+    
+    public void takeDamage(int amount) {
+        health -= amount;
+        	if (health < 0) health = 0;
+    	}
+
+    public int getHealth() {
+        	return health;
+    	}
+
 
     public void checkCollision(Level level) {
         for (Platform platform : level.getPlatforms()) {

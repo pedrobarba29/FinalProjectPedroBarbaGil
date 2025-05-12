@@ -13,6 +13,9 @@ public class Game extends JPanel implements Runnable {
     private LevelManager levelManager;
     private InputHandler inputHandler;
     private Thread gameThread;
+    
+    private GameState gameState = GameState.MENU;
+
 
     public Game() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -37,12 +40,19 @@ public class Game extends JPanel implements Runnable {
         while (true) {
             long now = System.nanoTime();
             if ((now - lastTime) >= nsPerTick) {
-                updateGame();
+                if (gameState == GameState.PLAYING) {
+                    updateGame();
+                }
                 repaint();
+                if (gameState == GameState.MENU && inputHandler.isStartGame()) {
+                    gameState = GameState.PLAYING;
+                }
+
                 lastTime = now;
             }
         }
     }
+
 
     private void updateGame() {
         player.update(inputHandler);
@@ -54,9 +64,17 @@ public class Game extends JPanel implements Runnable {
 
             // Collision check
             if (enemy.getBounds().intersects(player.getBounds())) {
-                // Reset player on enemy collision
-                player.setPosition(100, 100); // Respawn point
+                player.takeDamage(1); // Damage per frame of contact
+            if (player.getHealth() <= 0) {
+                // Reset game or show game over
+                player.setPosition(100, 100);
+                // Reset health or restart level
+                // Example:
+                // player.resetHealth(); // You'd have to implement this method
+                }
+
             }
+
         }
 
         if (player.getX() + player.getWidth() >= WIDTH && levelManager.hasNextLevel()) {
@@ -69,10 +87,15 @@ public class Game extends JPanel implements Runnable {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (gameState == GameState.MENU) {
+        	drawMenu(g);
+        } else if (gameState == GameState.PLAYING) {
         drawLevel(g);
         drawPlayer(g);
         drawEnemies(g);
-    }
+        drawHealthBar(g);
+        }
+    }        
 
     private void drawEnemies(Graphics g) {
         for (Enemy enemy : levelManager.getCurrentLevel().getEnemies()) {
@@ -92,4 +115,27 @@ public class Game extends JPanel implements Runnable {
         g.setColor(Color.RED);
         g.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
     }
+    
+    private void drawHealthBar(Graphics g) {
+        int maxHealth = 100;
+        int barWidth = 200;
+        int barHeight = 20;
+        int currentHealth = player.getHealth();
+
+        g.setColor(Color.GRAY);
+        g.fillRect(20, 20, barWidth, barHeight);
+        g.setColor(Color.GREEN);
+        g.fillRect(20, 20, (int)((currentHealth / (double)maxHealth) * barWidth), barHeight);
+        g.setColor(Color.BLACK);
+        g.drawRect(20, 20, barWidth, barHeight);
+    }
+    
+    private void drawMenu(Graphics g) {
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 36));
+        g.drawString("2D Platformer", 280, 200);
+        g.setFont(new Font("Arial", Font.PLAIN, 24));
+        g.drawString("Press ENTER to Start", 290, 300);
+    }
+
 }
