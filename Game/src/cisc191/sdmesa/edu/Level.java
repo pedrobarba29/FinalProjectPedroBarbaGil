@@ -6,6 +6,16 @@ import java.util.ArrayList;
 public class Level {
     private final List<Platform> platforms;
     private final List<Enemy> enemies;
+    private Goal goal;
+
+    public Goal getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Goal goal) {
+        this.goal = goal;
+    }
+
 
     public Level() {
         platforms = new ArrayList<>();
@@ -29,4 +39,15 @@ public class Level {
     public List<Enemy> getEnemies() {
         return enemies;
     }
+    
+    private Platform goalPlatform;
+
+    public Platform getGoalPlatform() {
+        return goalPlatform;
+    }
+
+    public void setGoalPlatform(Platform goalPlatform) {
+        this.goalPlatform = goalPlatform;
+    }
+
 }
